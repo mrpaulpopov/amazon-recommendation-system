@@ -1,11 +1,26 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.cpu
     volumes:
       - ./data:/app/data
-      - ./models:/app/models
+    ports:
+      - "8000:8000"
+
+  app-gpu:
+    build:
+      context: .
+      dockerfile: Dockerfile.gpu
+    volumes:
+      - ./data:/app/data
+    ports:
+      - "8000:8000"
+    profiles: ["gpu"]
     deploy:
       resources:
         reservations:
           devices:
-            - capabilities: [gpu]
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]

@@ -1,6 +1,5 @@
 .env
 data/
 *.py[cod]
-models/
 .idea
 .DS_Store

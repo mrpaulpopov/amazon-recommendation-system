@@ -1,0 +1,18 @@
+FROM pytorch/pytorch:2.2.0-cuda11.8-cudnn8-runtime
+
+WORKDIR /src/app
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+ENV PYTHONPATH=/src/app
+# выводить код без задержки
+ENV PYTHONUNBUFFERED=1
+
+#CMD ["python", "src/app/main.py"]
+CMD ["uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+#docker compose up --build
+#docker compose --profile gpu up --build

@@ -1,0 +1,21 @@
+FROM python:3.10-slim
+
+RUN pip install --no-cache-dir torch \
+    --index-url https://download.pytorch.org/whl/cpu
+
+WORKDIR /src/app
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+ENV PYTHONPATH=/src/app
+# выводить код без задержки
+ENV PYTHONUNBUFFERED=1
+
+#CMD ["python", "src/app/main.py"]
+CMD ["uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+#docker compose up --build
+#docker compose --profile gpu up --build
