@@ -1,10 +1,11 @@
 from fastapi import FastAPI
-
-from src.app.routers import predict_router, train_router
+from src.app.routers import predict_router, train_router, preprocess_router
 
 app = FastAPI()
 
 app.include_router(predict_router.router)
 
 app.include_router(train_router.router)
+
+app.include_router(preprocess_router.router)
 # uvicorn src.app.main:app --reload
