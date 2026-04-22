@@ -10,7 +10,7 @@ router = APIRouter(prefix="/train", tags=["train"])
 @router.post("/")
 def train_endpoint(data: TrainModel, api_key: str = Depends(verify_api_key)):
     try:
-        result = train_model(Config=Config, EMBEDDING_DIM=data.embedding_dim,
+        result = train_model(Config, EMBEDDING_DIM=data.embedding_dim,
                              LEARNING_RATE=data.learning_rate, BATCH_SIZE=data.batch_size, N_EPOCHS=data.n_epoch)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

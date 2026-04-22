@@ -2,7 +2,7 @@ import pandas as pd
 import pickle
 from src.ml.config import Config
 
-def preprocess(cfg: Config, samplesize=None):
+def preprocess(cfg: Config, samplesize):
     # reading from Config
     input_path = cfg.input_path
     output_path = cfg.data_path
@@ -20,7 +20,7 @@ def preprocess(cfg: Config, samplesize=None):
     df = df[df['item'].isin(valid_items)]
 
     if samplesize is not None:
-        df = df.sample(samplesize)
+        df = df.sample(samplesize, random_state=42) # консистентность между повторными запусками
 
     # Как работает factorize:
     # codes, uniques = pd.factorize(np.array(["b", "b", "a", "c", "b"], dtype="O"))
