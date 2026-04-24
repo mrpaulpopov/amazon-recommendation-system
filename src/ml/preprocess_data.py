@@ -20,9 +20,9 @@ def preprocess(cfg: Config, samplesize):
     df = df[df['item'].isin(valid_items)]
 
     if samplesize is not None:
-        df = df.sample(samplesize, random_state=42) # консистентность между повторными запусками
+        df = df.sample(samplesize, random_state=42) # consistency between starts
 
-    # Как работает factorize:
+    # How factorize works:
     # codes, uniques = pd.factorize(np.array(["b", "b", "a", "c", "b"], dtype="O"))
     # codes: ([0, 0, 1, 2, 0])
     # uniques: (['b', 'a', 'c'])

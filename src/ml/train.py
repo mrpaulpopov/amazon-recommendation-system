@@ -17,7 +17,7 @@ def build_dataloader(df, batch_size):
     return DataLoader(dataset, batch_size=batch_size, shuffle=True, drop_last=True)  # выбрасываем некратные BATCH_SIZE
 
 
-def train(model, train_loader, optimizer, loss_fn, N_EPOCHS, cfg: Config):
+def train_loop(model, train_loader, optimizer, loss_fn, N_EPOCHS, cfg: Config):
     # reading from Config
     model_path, DEVICE = cfg.model_path, cfg.DEVICE
     model.to(DEVICE)
@@ -66,7 +66,7 @@ def train_pipeline(cfg: Config, EMBEDDING_DIM, LEARNING_RATE, BATCH_SIZE, N_EPOC
     loss_fn = nn.MSELoss()
     train_loader = build_dataloader(df, BATCH_SIZE)
 
-    train(model, train_loader, optimizer, loss_fn, N_EPOCHS, Config)
+    train_loop(model, train_loader, optimizer, loss_fn, N_EPOCHS, Config)
 
     config = {"EMBEDDING_DIM": EMBEDDING_DIM}
     config_path = model_path.with_name(model_path.name + ".config.json")
