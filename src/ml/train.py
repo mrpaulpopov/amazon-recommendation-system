@@ -14,7 +14,7 @@ def build_dataloader(df, batch_size):
     items_t = torch.tensor(df['item_id'].to_list(), dtype=torch.long)
     ratings_t = torch.tensor(df['rating'].to_list(), dtype=torch.float)
     dataset = TensorDataset(users_t, items_t, ratings_t)
-    return DataLoader(dataset, batch_size=batch_size, shuffle=True, drop_last=True)  # выбрасываем некратные BATCH_SIZE
+    return DataLoader(dataset, batch_size=batch_size, shuffle=True, drop_last=True) # discard non-multiples of BATCH_SIZE
 
 
 def train_loop(model, train_loader, optimizer, loss_fn, N_EPOCHS, cfg: Config):

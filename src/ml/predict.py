@@ -15,7 +15,7 @@ def predict_user_items(cfg: Config, user_str, item_strs):
     num_users = mappings["num_users"]
     num_items = mappings["num_items"]
 
-    # Считываем Embedding Dim из сохраненного конфига. Это значение должно не меняться между train и predict.
+    # Reading EMBEDDING DIM value from json. This value should not be changed between train and predict.
     config_path = model_path.with_name(model_path.name + ".config.json")
     with open(config_path) as f:
         json_data = json.load(f)
@@ -26,7 +26,7 @@ def predict_user_items(cfg: Config, user_str, item_strs):
     model.eval()
 
     with torch.no_grad():
-        # считаем средние embedding
+        # mean embedding
         mean_user_emb = model.user_emb.weight.mean(dim=0)
         mean_item_emb = model.item_emb.weight.mean(dim=0)
 
@@ -49,7 +49,7 @@ def predict_user_items(cfg: Config, user_str, item_strs):
                 print(f"Unknown item: {item} -> using mean embedding")
                 item_vec = mean_item_emb
 
-            score = torch.sigmoid((user_vec * item_vec).sum())
+            score = torch.sigmoid((user_vec * item_vec).sum()) # normalizing output between 0 and 1
             preds.append(score)
 
         return torch.stack(preds).detach().cpu().numpy().tolist() if preds else 0
