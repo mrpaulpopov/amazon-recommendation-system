@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile.cpu
     volumes:
       - ./data:/app/data
+      - ./models:/app/models
     ports:
       - "8000:8000"
     profiles: ["cpu"]
@@ -15,6 +16,7 @@ services:
       dockerfile: Dockerfile.gpu
     volumes:
       - ./data:/app/data
+      - ./models:/app/models
     ports:
       - "8000:8000"
     profiles: ["gpu"]
