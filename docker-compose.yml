@@ -6,7 +6,8 @@ services:
     volumes:
       - ./data:/app/data
     ports:
-      - "18000:8000"
+      - "8000:8000"
+    profiles: ["cpu"]
 
   app-gpu:
     build:
@@ -15,7 +16,7 @@ services:
     volumes:
       - ./data:/app/data
     ports:
-      - "18000:8000"
+      - "8000:8000"
     profiles: ["gpu"]
     deploy:
       resources:
