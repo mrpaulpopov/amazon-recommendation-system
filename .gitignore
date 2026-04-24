@@ -1,5 +1,5 @@
 .env
-data/
 *.py[cod]
 .idea
 .DS_Store
+data/Electronics_raw.csv

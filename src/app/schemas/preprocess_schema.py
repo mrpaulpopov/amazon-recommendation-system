@@ -1,4 +1,4 @@
 from pydantic import BaseModel
 
 class PreprocessData(BaseModel):
-    samplesize: int = 10000
+    samplesize: int = 100000

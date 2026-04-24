@@ -10,7 +10,7 @@ router = APIRouter(prefix="/preprocess", tags=["preprocess"])
 @router.post("/")
 def preprocess_endpoint(data: PreprocessData, api_key: str = Depends(verify_api_key)):
     try:
-        preprocess_service(Config=Config, samplesize=data.samplesize)
+        preprocess_service(Config, samplesize=data.samplesize)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     return {"Preprocessing finished."}
