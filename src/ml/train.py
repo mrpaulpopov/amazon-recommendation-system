@@ -17,9 +17,9 @@ def build_dataloader(df, batch_size):
     return DataLoader(dataset, batch_size=batch_size, shuffle=True, drop_last=True) # discard non-multiples of BATCH_SIZE
 
 
-def train_loop(model, train_loader, optimizer, loss_fn, N_EPOCHS, cfg: Config):
+def train_loop(model, train_loader, optimizer, loss_fn, N_EPOCHS, Config):
     # reading from Config
-    model_path, DEVICE = cfg.model_path, cfg.DEVICE
+    model_path, DEVICE = Config.MODEL_PATH, Config.DEVICE
     model.to(DEVICE)
     model.train()
     print(f'start training on {DEVICE}...')
@@ -48,9 +48,9 @@ def train_loop(model, train_loader, optimizer, loss_fn, N_EPOCHS, cfg: Config):
     torch.save(model.state_dict(), model_path)
 
 
-def train_pipeline(cfg: Config, EMBEDDING_DIM, LEARNING_RATE, BATCH_SIZE, N_EPOCHS):
+def train_pipeline(Config, EMBEDDING_DIM, LEARNING_RATE, BATCH_SIZE, N_EPOCHS):
     # reading from Config
-    data_path, model_path, mapping_path, DEVICE = cfg.data_path, cfg.model_path, cfg.mapping_path, cfg.DEVICE
+    data_path, model_path, mapping_path, DEVICE = Config.DATA_PATH, Config.MODEL_PATH, Config.MAPPING_PATH, Config.DEVICE
 
     df = pd.read_csv(data_path)
 
@@ -62,13 +62,13 @@ def train_pipeline(cfg: Config, EMBEDDING_DIM, LEARNING_RATE, BATCH_SIZE, N_EPOC
     item_ids = mappings["item_to_id"]
 
     model = MFModel(num_users, num_items, EMBEDDING_DIM)
-    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
+    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=0.0001)
     loss_fn = nn.MSELoss()
     train_loader = build_dataloader(df, BATCH_SIZE)
 
     train_loop(model, train_loader, optimizer, loss_fn, N_EPOCHS, Config)
 
-    config = {"EMBEDDING_DIM": EMBEDDING_DIM}
+    config_json = {"EMBEDDING_DIM": EMBEDDING_DIM}
     config_path = model_path.with_name(model_path.name + ".config.json")
     with open(config_path, "w") as f:
-        json.dump(config, f)
+        json.dump(config_json, f)

@@ -1,7 +1,7 @@
 from src.ml.config import Config
 from src.ml.preprocess_data import preprocess
 
-def preprocess_service(cfg: Config, samplesize):
-    if not cfg.input_path.exists():
+def preprocess_service(Config, samplesize):
+    if not Config.INPUT_PATH.exists():
         raise ValueError("You should download the dataset first!")
-    return preprocess(cfg, samplesize)
+    return preprocess(Config, samplesize)

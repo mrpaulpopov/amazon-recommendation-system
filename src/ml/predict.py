@@ -4,9 +4,9 @@ from src.ml.model import MFModel
 from src.ml.config import Config
 import json
 
-def predict_user_items(cfg: Config, user_str, item_strs):
+def predict_user_items(Config, user_str, item_strs):
     # reading from Config
-    model_path, mapping_path = cfg.model_path, cfg.mapping_path
+    model_path, mapping_path = Config.MODEL_PATH, Config.MAPPING_PATH
 
     with open(mapping_path, "rb") as f:
         mappings = pickle.load(f)

@@ -2,11 +2,11 @@ import pandas as pd
 import pickle
 from src.ml.config import Config
 
-def preprocess(cfg: Config, samplesize):
+def preprocess(Config, samplesize):
     # reading from Config
-    input_path = cfg.input_path
-    output_path = cfg.data_path
-    mapping_path = cfg.mapping_path
+    input_path = Config.INPUT_PATH
+    output_path = Config.DATA_PATH
+    mapping_path = Config.MAPPING_PATH
 
     df = pd.read_csv(input_path)  # item,user,rating,timestamp
     df = df.set_axis(['item', 'user', 'rating', 'timestamp'], axis=1)  # labeling
