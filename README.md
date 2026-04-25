@@ -1,18 +1,60 @@
+## Overview
+This project implements a recommendation system for predicting user preferences based on historical interactions.
+The model combines embedding representations with matrix factorization and is evaluated on feedback data.
 
-Рекомендательная система на основе embedding-векторов и matrix factorization.
-Для неизвестных значений используются усредненные embedding-вектора.
-Для подготовки данных и создания маппинга используется скрипт preprocess_data.
+## How to use
+1. Download the dataset with ```/download``` (~876 MB)
+2. Run ```/preprocess```
+3. Train the model ```/train```
+4. Run inference ```/predict```. 
 
-### Данные
+The model predicts the probability that the user will like each item.
 
-| item               | user                  | rating   | timestamp      | user_id | item_id |
-|--------------------|-----------------------|----------|----------------|---------|---------|
-| B0016LFN2C         | A301F0EVCXRWHU        | 1.0      | 1437350400     | 0       | 0       |
-| B00B20OYUO         | A3ME8P7AK6POCR        | 3.0      | 1500595200     | 1       | 1       |
-| B00MMLV7VQ         | A3L3E85DXZCWE5        | 4.0      | 1423612800     | 2       | 2       |
-| B0006BB9MG         | AFX45TGA12P8K         | 5.0      | 1302912000     | 3       | 3       |
+## Launch
+Two profiles are available for running the project:
+
+**GPU (with CUDA support):**
+
+``` docker compose --profile gpu up --build```
+
+**CPU only:**
+
+``` docker compose --profile cpu up --build```
+
+### Dataset Overview
+The dataset contains user-item interactions with ratings.
+
+| item               | user                  | rating | timestamp      | user_id | item_id |
+|--------------------|-----------------------|--------|----------------|---------|---------|
+| B000K8PH8C         | A3PHJ4NMHMBBUB        | 5.0    | 1391212800     | 0       | 0       |
+| B001T6BK6M         | A3DTVMQGMNLX26        | 2.0    | 1392854400     | 1       | 1       |
+| B007GFX0PY         | A2ZGNB9CWL7SLK        | 1.0    | 1437091200     | 2       | 2       |
 
 
-``` docker compose up --build``` 
 
-``` docker compose --profile gpu up --build``` 
+### Data Preprocessing
+The preprocessing pipeline (implemented with Pandas) includes:
+1. Removing users and items with fewer than 5 interactions.
+2. Sampling the dataset using ```.sample()``` (configurable parameter).
+3. Encoding users and items with ```.factorize()```.
+4. Saving mappings (user - id, item - id, and vice versa).
+
+### Training
+Prerequisites: processed dataset file, mapping file.
+
+Training: uses a DataLoader. Each epoch iterates over: user_batch, item_batch, rating_batch.
+
+
+The model is based on matrix factorization:
+- user and item embeddings are learned
+- Bias terms are included for users and items
+- Unknown users/items are handled via mean embeddings
+
+
+### Prediction
+For unknown values, mean embedding vectors are used as a fallback.
+
+## Requirements
+- Docker
+- Docker Compose
+- (optional) CUDA-enabled GPU
