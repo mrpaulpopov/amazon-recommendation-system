@@ -12,7 +12,7 @@ import json
 def build_dataloader(df, batch_size):
     users_t = torch.tensor(df['user_id'].to_list(), dtype=torch.long)
     items_t = torch.tensor(df['item_id'].to_list(), dtype=torch.long)
-    ratings_t = torch.tensor(df['rating'].to_list(), dtype=torch.float)
+    ratings_t = torch.tensor(df['label'].to_list(), dtype=torch.float) # using label 'good-bad' instead of rating
     dataset = TensorDataset(users_t, items_t, ratings_t)
     return DataLoader(dataset, batch_size=batch_size, shuffle=True, drop_last=True) # discard non-multiples of BATCH_SIZE
 
@@ -63,7 +63,7 @@ def train_pipeline(Config, EMBEDDING_DIM, LEARNING_RATE, BATCH_SIZE, N_EPOCHS):
 
     model = MFModel(num_users, num_items, EMBEDDING_DIM)
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=0.0001)
-    loss_fn = nn.MSELoss()
+    loss_fn = nn.BCEWithLogitsLoss() # loss function for classification
     train_loader = build_dataloader(df, BATCH_SIZE)
 
     train_loop(model, train_loader, optimizer, loss_fn, N_EPOCHS, Config)

@@ -19,6 +19,9 @@ def preprocess(Config, samplesize):
     valid_items = counts[counts > 5].index
     df = df[df['item'].isin(valid_items)]
 
+    # ranking for good/bad
+    df['label'] = (df['rating'] >= 4).astype(float)
+
     if samplesize is not None:
         df = df.sample(samplesize, random_state=42) # consistency between starts
 
