@@ -45,4 +45,4 @@ def predict_user_items(Config, user_str, item_strs):
                 score = torch.sigmoid(logit).item()
             preds.append(score)
 
-        return torch.stack(preds).detach().cpu().numpy().tolist() if preds else 0
+        return preds if preds else 0
