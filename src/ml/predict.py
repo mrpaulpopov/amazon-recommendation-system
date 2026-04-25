@@ -26,30 +26,23 @@ def predict_user_items(Config, user_str, item_strs):
     model.eval()
 
     with torch.no_grad():
-        # mean embedding
-        mean_user_emb = model.user_emb.weight.mean(dim=0)
-        mean_item_emb = model.item_emb.weight.mean(dim=0)
-
-        # --- user ---
-        if user_str in user_to_id:
-            user_id = user_to_id[user_str]
-            user_vec = model.user_emb(torch.tensor(user_id))
-        else:
-            print(f"Unknown user: {user_str} -> using mean embedding")
-            user_vec = mean_user_emb
-
         preds = []
+        user_id = user_to_id.get(user_str)
 
-        # --- items ---
         for item in item_strs:
-            if item in item_to_id:
-                item_id = item_to_id[item]
-                item_vec = model.item_emb(torch.tensor(item_id))
+            item_id = item_to_id.get(item)
+            if user_id is None:
+                score = 0.0
+                print(f"Warning: unknown user: {user_str}")
+            elif item_id is None:
+                score = 0.0
+                print(f"Warning: unknown item: {item}")
             else:
-                print(f"Unknown item: {item} -> using mean embedding")
-                item_vec = mean_item_emb
-
-            score = torch.sigmoid((user_vec * item_vec).sum()) # normalizing output between 0 and 1
+                logit = model(
+                    torch.tensor([user_id]),
+                    torch.tensor([item_id])
+                )
+                score = torch.sigmoid(logit).item()
             preds.append(score)
 
         return torch.stack(preds).detach().cpu().numpy().tolist() if preds else 0
