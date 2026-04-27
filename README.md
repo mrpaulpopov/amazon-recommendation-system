@@ -2,6 +2,11 @@
 This project implements a recommendation system for predicting user preferences based on historical interactions.
 The model combines embedding representations with matrix factorization and is evaluated on feedback data.
 
+## Features
+- Matrix factorization with biases
+- GPU/CPU training
+- Dockerized pipeline
+
 ## How to use
 1. Download the dataset with ```/download``` (~876 MB)
 2. Run ```/preprocess```
@@ -10,7 +15,7 @@ The model combines embedding representations with matrix factorization and is ev
 
 The model predicts the probability that the user will like each item.
 
-## Launch
+## Building
 Two profiles are available for running the project:
 
 **GPU (with CUDA support):**
@@ -30,7 +35,15 @@ The dataset contains user-item interactions with ratings.
 | B001T6BK6M         | A3DTVMQGMNLX26        | 2.0    | 1392854400     | 1       | 1       |
 | B007GFX0PY         | A2ZGNB9CWL7SLK        | 1.0    | 1437091200     | 2       | 2       |
 
+Prediction is computed as:
 
+r̂(u, i) = μ + b_u + b_i + <p_u, q_i>
+
+## Pipeline
+- downloading dataset
+- preprocessing
+- training
+- inference
 
 ### Data Preprocessing
 The preprocessing pipeline (implemented with Pandas) includes:
@@ -48,13 +61,15 @@ Training: uses a DataLoader. Each epoch iterates over: user_batch, item_batch, r
 The model is based on matrix factorization:
 - user and item embeddings are learned
 - Bias terms are included for users and items
-- Unknown users/items are handled via mean embeddings
 
 
-### Prediction
-For unknown values, mean embedding vectors are used as a fallback.
+RMSE >> MAE → есть выбросы
+RMSE ≈ MAE → ошибки равномерные
+У тебя:
+RMSE ≈ 1.18
+MAE ≈ 0.90
+MAE 0.9 → в среднем ты ошибаешься почти на 1 рейтинг
+RMSE выше → иногда ошибаешься сильно (например 2–3 балла)
+У меня регрессионная модель! и это рекомендательная система!
 
-## Requirements
-- Docker
-- Docker Compose
-- (optional) CUDA-enabled GPU
+Matrix factorization for explicit feedback!

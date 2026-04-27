@@ -17,4 +17,6 @@ class MFModel(nn.Module):
         u = self.user_emb(user_ids)
         i = self.item_emb(item_ids)
         dot = (u * i).sum(dim=1)
-        return dot + self.user_bias(user_ids).squeeze(-1) + self.item_bias(item_ids).squeeze(-1)
+        return (dot + self.user_bias(user_ids).squeeze(-1)
+                + self.item_bias(item_ids).squeeze(-1)
+                + self.global_bias.squeeze(-1))

@@ -42,7 +42,23 @@ def predict_user_items(Config, user_str, item_strs):
                     torch.tensor([user_id]),
                     torch.tensor([item_id])
                 )
-                score = torch.sigmoid(logit).item()
+                score = (logit.item() - 1) / 4 # from 1-5 to 0-1
             preds.append(score)
 
         return preds if preds else 0
+
+    # def recommend_for_user(model, user_id, all_item_ids, top_k=10):
+    #     model.eval()
+    #     scores = []
+    #
+    #     with torch.no_grad():
+    #         for item_id in all_item_ids:
+    #             logit = model(
+    #                 torch.tensor([user_id]),
+    #                 torch.tensor([item_id])
+    #             )
+    #             score = torch.sigmoid(logit).item()
+    #             scores.append((item_id, score))
+    #
+    #     scores.sort(key=lambda x: x[1], reverse=True)
+    #     return scores[:top_k]

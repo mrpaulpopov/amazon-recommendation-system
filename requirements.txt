@@ -1,4 +1,5 @@
 torch
+torchvision
 pandas
 numpy
 pathlib
@@ -6,3 +7,4 @@ fastapi
 pydantic
 uvicorn
 requests
+scikit-learn
