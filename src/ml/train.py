@@ -15,7 +15,7 @@ import time
 def build_dataloader(df, batch_size):
     users_t = torch.tensor(df['user_id'].to_list(), dtype=torch.long)
     items_t = torch.tensor(df['item_id'].to_list(), dtype=torch.long)
-    ratings_t = torch.tensor(df['rating'].to_list(), dtype=torch.float)
+    ratings_t = torch.tensor(((df['rating'] - 1) / 4).to_list(), dtype=torch.float) # simple normalization (without z-score)
     dataset = TensorDataset(users_t, items_t, ratings_t)
     return DataLoader(dataset, batch_size=batch_size, shuffle=True, drop_last=True) # discard non-multiples of BATCH_SIZE
 
@@ -52,9 +52,8 @@ def train_loop(model, train_loader, val_loader, optimizer, loss_fn, N_EPOCHS, Co
             item_batch = item_batch.to(DEVICE)
             rating_batch = rating_batch.to(DEVICE)
 
-            raw_preds = model(user_batch, item_batch)
-            preds = torch.clamp(raw_preds, 1.0, 5.0) # clamping
-            # preds = 1 + 4 * torch.sigmoid(raw_preds) # clamping v2
+            preds = model(user_batch, item_batch)
+            # preds = torch.sigmoid(raw_preds) # clamping
 
             loss = loss_fn(preds, rating_batch)  # FORWARD pass
 
@@ -82,6 +81,8 @@ def train_loop(model, train_loader, val_loader, optimizer, loss_fn, N_EPOCHS, Co
                 rating_batch = rating_batch.to(DEVICE)
 
                 preds = model(user_batch, item_batch)
+                # preds = torch.sigmoid(raw_preds)  # clamping v2
+
                 loss = loss_fn(preds, rating_batch)
 
                 val_loss_sum += loss.item()

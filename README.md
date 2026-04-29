@@ -6,6 +6,7 @@ The model combines embedding representations with matrix factorization and is ev
 - Matrix factorization with biases
 - GPU/CPU training
 - Dockerized pipeline
+- Class 'Config' with constants and paths
 
 ## How to use
 1. Download the dataset with ```/download``` (~876 MB)

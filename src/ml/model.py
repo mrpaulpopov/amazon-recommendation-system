@@ -20,3 +20,4 @@ class MFModel(nn.Module):
         return (dot + self.user_bias(user_ids).squeeze(-1)
                 + self.item_bias(item_ids).squeeze(-1)
                 + self.global_bias.squeeze(-1))
+        # return dot # without bias
