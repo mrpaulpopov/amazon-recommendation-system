@@ -8,11 +8,12 @@ RUN pip install -r requirements.txt
 COPY . .
 
 ENV PYTHONPATH=/src/app
-# выводить код без задержки
+# print without buffering and delay...
 ENV PYTHONUNBUFFERED=1
 
 #CMD ["python", "src/app/main.py"]
-CMD ["uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# tensorboard + uvicorn
+CMD sh -c "tensorboard --logdir=/logs --host=0.0.0.0 --port=6006 & uvicorn src.app.main:app --host 0.0.0.0 --port=8000"
 
 #docker compose up --build
 #docker compose --profile gpu up --build

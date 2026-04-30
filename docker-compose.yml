@@ -6,8 +6,10 @@ services:
     volumes:
       - ./data:/src/app/data
       - ./models:/src/app/models
+      - ./logs:/logs
     ports:
       - "8000:8000"
+      - "6006:6006"
     profiles: ["cpu"]
 
   app-gpu:
@@ -17,8 +19,10 @@ services:
     volumes:
       - ./data:/src/app/data
       - ./models:/src/app/models
+      - ./logs:/logs
     ports:
       - "8000:8000"
+      - "6006:6006"
     profiles: ["gpu"]
     deploy:
       resources:
