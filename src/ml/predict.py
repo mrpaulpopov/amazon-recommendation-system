@@ -5,6 +5,7 @@ from src.ml.config import Config
 import json
 import pandas as pd
 
+
 def predict_user_items(Config, user_str, item_strs):
     # reading from Config
     model_path, mapping_path = Config.MODEL_PATH, Config.MAPPING_PATH
@@ -44,10 +45,11 @@ def predict_user_items(Config, user_str, item_strs):
                     torch.tensor([item_id])
                 )
                 score = logit.item()
-                score = max(0.0, min(1.0, score))
+                score = max(0.0, min(1.0, score))  # simple clamping
             preds.append(score)
 
         return preds if preds else 0
+
 
 def recommend_for_user(Config, user_str, top_k):
     data_path, model_path, mapping_path = Config.DATA_PATH, Config.MODEL_PATH, Config.MAPPING_PATH
@@ -83,8 +85,6 @@ def recommend_for_user(Config, user_str, top_k):
     seen_items = set(df[df['user_id'] == user_id]['item_id'])
     all_item_ids = list(item_to_id.values())
 
-
-
     # --- batch inference ---
     with torch.no_grad():
         user_tensor = torch.tensor([user_id] * len(all_item_ids))
@@ -94,10 +94,7 @@ def recommend_for_user(Config, user_str, top_k):
 
     # --- convert to list ---
     scores = scores.numpy()
-
     item_scores = list(zip(all_item_ids, scores))
-
-
 
     id_to_item = {v: k for k, v in item_to_id.items()}
     seen_items_set = set(seen_items)
@@ -112,9 +109,9 @@ def recommend_for_user(Config, user_str, top_k):
 
     # --- sort ---
     item_scores.sort(key=lambda x: x["score"], reverse=True)
-    print(seen_items)
-    print()
-    print(item_scores[:20])
+
+    # --- debug information ---
+    print(item_scores[:10])
     print()
     print([x for x in item_scores if x["seen"]])
     print()
