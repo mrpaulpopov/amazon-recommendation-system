@@ -8,3 +8,4 @@ pydantic
 uvicorn
 requests
 scikit-learn
+tensorboard
