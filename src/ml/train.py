@@ -108,7 +108,7 @@ def train_loop(model, train_loader, val_loader, optimizer, loss_fn, N_EPOCHS, Co
         writer.add_scalar("train_loss", train_loss, epoch)
         writer.add_scalar("val_loss", val_loss, epoch)
         writer.add_scalar("val_rmse", rmse, epoch)
-        writer.add_scalar("mae", mae, epoch)
+        writer.add_scalar("val_mae", mae, epoch)
         # writer.add_scalar("LR", optimizer.param_groups[0]["lr"], epoch)
 
     writer.close()

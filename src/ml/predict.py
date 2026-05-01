@@ -29,10 +29,10 @@ def predict_user_items(Config, user_str, item_strs):
 
     with torch.no_grad():
         preds = []
-        user_id = user_to_id.get(user_str)
+        user_id = user_to_id.get(user_str)  # user_str -> user_id
 
         for item in item_strs:
-            item_id = item_to_id.get(item)
+            item_id = item_to_id.get(item)  # item -> item_id
             if user_id is None:
                 score = 0.0
                 print(f"Warning: unknown user: {user_str}")
@@ -40,12 +40,9 @@ def predict_user_items(Config, user_str, item_strs):
                 score = 0.0
                 print(f"Warning: unknown item: {item}")
             else:
-                logit = model(
-                    torch.tensor([user_id]),
-                    torch.tensor([item_id])
-                )
-                score = logit.item()
-                score = max(0.0, min(1.0, score))  # simple clamping
+                # this is logit (model returns prediction if 'return torch.sigmoid(...)'
+                logit = model(torch.tensor([user_id]), torch.tensor([item_id]))
+                score = logit.item()  # score = logits, it's not probability.
             preds.append(score)
 
         return preds if preds else 0
@@ -80,40 +77,35 @@ def recommend_for_user(Config, user_str, top_k):
     model.eval()
 
     # --- seen items ---
-
+    # get previously seen item IDs for a given user
     df = pd.read_csv(data_path)
-    seen_items = set(df[df['user_id'] == user_id]['item_id'])
+    mask = df['user_id'] == user_id  # pandas boolean mask
+    filtered_df = df[mask]  # filter rows using mask
+    items_series = filtered_df['item_id']  # SELECT 'item_id' column
+    seen_items_set = set(items_series)  # pandas.Series to set
+
     all_item_ids = list(item_to_id.values())
 
     # --- batch inference ---
     with torch.no_grad():
-        user_tensor = torch.tensor([user_id] * len(all_item_ids))
-        item_tensor = torch.tensor(all_item_ids)
+        item_tensor = torch.tensor(all_item_ids)  # tensor of all item ids
+        user_tensor = torch.tensor(
+            [user_id] * len(all_item_ids))  # item_t = [i1, i2, i3, i4..], user_t = [u, u, u, u..]
 
         scores = model(user_tensor, item_tensor)  # raw scores
 
-    # --- convert to list ---
-    scores = scores.numpy()
-    item_scores = list(zip(all_item_ids, scores))
+    id_to_item = {v: k for k, v in item_to_id.items()}  # dict comprehension: swapping
 
-    id_to_item = {v: k for k, v in item_to_id.items()}
-    seen_items_set = set(seen_items)
-    item_scores = [
-        {
-            "item": id_to_item[i],
-            "score": float(s),
-            "seen": i in seen_items_set
-        }
-        for i, s in zip(all_item_ids, scores)
-    ]
+    # list of dictionaries (each item has multiple fields)
+    item_scores = []
+    for i, s in zip(all_item_ids, scores):  # iterate over item ids and model scores in parallel
+        item_scores.append({
+            "item": id_to_item[i],  # item string
+            "score": float(s),  # tensor to float
+            "seen": i in seen_items_set  # is seen?
+        })
 
     # --- sort ---
     item_scores.sort(key=lambda x: x["score"], reverse=True)
-
-    # --- debug information ---
-    print(item_scores[:10])
-    print()
-    print([x for x in item_scores if x["seen"]])
-    print()
-    print(scores.mean(), scores.std())
+    # print(item_scores[:10]) # debug information
     return item_scores[:top_k]
