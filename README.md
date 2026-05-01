@@ -1,52 +1,58 @@
 # Amazon Recommendation System
 
 ## Overview
-This project implements a recommendation system trained on real Amazon review data.
-The model predicts user-item preference scores using matrix factorization with bias terms and embedding representations.
-This is a regression over explicit feedback (ratings).
+This project predicts user ratings for unseen items based on historical interactions (ratings)
+and generates Top-K recommendations.
+
+It uses matrix factorization with bias terms and embedding representations,
+formulated as a regression task over explicit feedback.
 
 **Pipeline**: Data Download - Preprocessing - Training - Evaluation - API (Inference)  
 **Tech Stack**: Python, PyTorch, FastAPI, Pandas, Docker, TensorBoard
 
 ## Features
-- Docker-based pipeline (GPU/CPU support)
+- Docker (GPU/CPU support)
 - Data preprocessing with Pandas
 - API with FastAPI
 - Input validation using Pydantic
 - API key protection via FastAPI Depends
 - Configuration via Config class (paths, parameters)
 
-
-
-## ML Features
+## ML Approach
 - Matrix factorization with user and item embeddings (with bias terms)
-- Batch training via DataLoader
-- TensorBoard logging
-- Manual learning rate scheduling based on epoch (currently disabled)
+- Batch training via DataLoader (over **user-item-rating** triplets).
 - Train/validation split
 - Saving model to the file + JSON metadata storage
+- Optimization via MSE loss
 - Metrics: MSE, RMSE, MAE
+- Manual learning rate scheduling based on epoch (currently disabled)
+- TensorBoard logging
 
 ## Limitations
 - Popular items have a greater score than the known user-item pairs due to global bias effects.
 - Model outputs scores (not probabilities).
 - Inference currently uses Pandas DataFrame, which might limit performance.
-- Currently, there are more modern recommendation systems in the world.
+- The model uses classical matrix factorization. Currently, there are more modern recommendation models in the world (based on implicit feedback).
 
-## Usage
-After starting the services:
-- API documentation: http://localhost:8000/docs
-- TensorBoard logs: http://localhost:6006/
-1. Download dataset: ```/download``` (~876 MB)
-2. Run preprocessing: ```/preprocess```
-3. Train model: ```/train```
-4. Run inference: ```/predict``` or ```/topk```. 
+## Results
+> **Epoch 70/70 | train_loss=0.0455 | val_loss=0.0855 | val_rmse=0.2924 | val_mae=0.2158**
 
-## Output
-The model produces a relative preference score indicating how likely a user is to interact positively with an item.
-Additionally, it supports Top-K recommendation output.
+### Metric Interpretation
+The model is trained on normalized ratings in the [0, 1] range using the transformation (rating - 1) / 4.
 
-## Docker Setup
+- **MAE ≈ 0.22 (normalized)** corresponds to ≈ **0.88 rating points** on the original [1, 5] scale  
+- **RMSE ≈ 0.29 (normalized)** corresponds to ≈ **1.16 rating points** on the original scale  
+
+This means that, on average, predicted ratings deviate by less than 1 point from true user ratings.
+- No significant overfitting is observed.
+- The model converges within ~20 epochs
+
+
+| ![train_loss.png](docs/plots/train_loss.png) | ![val_loss.png](docs/plots/val_loss.png) |
+|----------------------------------------------|------------------------------------------|
+| ![val_rmse.png](docs/plots/val_rmse.png)     | ![val_mae.png](docs/plots/val_mae.png)   |
+
+## Usage + Docker Setup
 Two execution profiles are available:
 
 **GPU (CUDA-enabled):**
@@ -57,6 +63,15 @@ Two execution profiles are available:
 
 ``` docker compose --profile cpu up --build```
 
+After starting the services:
+- API documentation: http://localhost:8000/docs
+- TensorBoard logs: http://localhost:6006/
+1. Download dataset: ```/download``` (~876 MB)
+2. Run preprocessing: ```/preprocess```
+3. Train model: ```/train```
+4. Run inference: ```/predict``` or ```/topk```.
+
+
 ## Dataset
 The dataset contains explicit user-item ratings from Amazon reviews.
 
@@ -66,41 +81,9 @@ The dataset contains explicit user-item ratings from Amazon reviews.
 | B001T6BK6M         | A3DTVMQGMNLX26        | 2.0    | 1392854400     |
 | B007GFX0PY         | A2ZGNB9CWL7SLK        | 1.0    | 1437091200     |
 
-## Model Formulation
-$r̂(u, i) = μ + b_u + b_i + <p_u, q_i> $  
-μ — global mean rating  
-bᵤ — user bias  
-bᵢ — item bias  
-pᵤ, qᵢ — latent embeddings  
-
-## Data Preprocessing
+### Data Preprocessing
 Implemented using Pandas:
 1. Filter users and items with fewer than 5 interactions
 2. Optional dataset subsampling via ```.sample()```
 3. Encode users and items using ```.factorize()```
 4. Save mappings (user - id, item - id, and reverse mappings for inference).
-
-## Training Details
-Training uses batch optimization over **user-item-rating** triplets.
-Model learns: user embeddings, item embeddings, bias parameters.
-
-## Results
-> **Epoch 70/70 | train_loss=0.0455 | val_loss=0.0855 | val_rmse=0.2924 | val_mae=0.2158**
-
-### Interpretation
-Using TensorBoard plots,
-- No clear overfitting observed.
-- 20 epochs are sufficient for given hyperparameters.
-- Error levels are stable across validation set (MAE ≈ 0.22, RMSE ≈ 0.29)
-
-| ![train_loss.png](docs/plots/train_loss.png) | ![val_loss.png](docs/plots/val_loss.png) |
-|----------------------------------------------|------------------------------------------|
-| ![val_rmse.png](docs/plots/val_rmse.png)     | ![val_mae.png](docs/plots/val_mae.png)   |
-
-
-### Key Achievements
-- Built a full end-to-end recommendation system pipeline from raw Amazon review data to production-ready API.
-- Implemented a scalable matrix factorization model with bias terms and embedding representations for explicit feedback prediction.
-- Designed a reproducible ML workflow with Docker (CPU/GPU support), enabling consistent training and inference environments.
-- Integrated FastAPI inference service with authentication, validation (Pydantic), and batch prediction endpoints.
-- Implemented experiment tracking via TensorBoard for monitoring training dynamics and model convergence.
