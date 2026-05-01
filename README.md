@@ -1,7 +1,7 @@
 # Amazon Recommendation System
 
 ## Overview
-This project predicts user ratings for unseen items based on historical interactions (ratings)
+This project predicts user-item scores for unseen items based on historical interactions (ratings)
 and generates Top-K recommendations.
 
 It uses matrix factorization with bias terms and embedding representations,
