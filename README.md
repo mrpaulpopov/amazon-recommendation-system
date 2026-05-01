@@ -1,76 +1,112 @@
+# Amazon Recommendation System
+
 ## Overview
-This project implements a recommendation system for predicting user preferences based on historical interactions.
-The model combines embedding representations with matrix factorization and is evaluated on feedback data.
+This project implements a recommendation system trained on real Amazon review data.
+The model predicts user-item preference scores using **matrix factorization with bias terms and embedding representations**.
+This is a **regression over explicit feedback (ratings)**.
+
+### Pipeline
+Data Download - Preprocessing - Training - Evaluation - API (Inference)
 
 ## Features
-- Matrix factorization with biases
-- GPU/CPU training
-- Dockerized pipeline
-- Class 'Config' with constants and paths
+- Docker-based pipeline (GPU/CPU support)
+- Data preprocessing with Pandas
+- API with FastAPI
+- Input validation using Pydantic
+- API key protection via FastAPI Depends
+- Configuration via Config class (paths, parameters)
 
-## How to use
-1. Download the dataset with ```/download``` (~876 MB)
-2. Run ```/preprocess```
-3. Train the model ```/train```
-4. Run inference ```/predict```. 
+## Tech Stack
+- Python
+- PyTorch
+- FastAPI
+- Pandas
+- Docker
+- TensorBoard
 
-The model predicts the probability that the user will like each item.
+## ML Features
+- Matrix factorization with user and item embeddings (with bias terms)
+- Batch training via DataLoader
+- TensorBoard logging
+- Manual learning rate scheduling based on epoch (currently disabled)
+- Train/validation split
+- Model saving to the file + JSON metadata storage
+- Metrics: MSE, RMSE, MAE
 
-## Building
-Two profiles are available for running the project:
+## Limitations
+- Popular items have a greater score than the known user-item pairs due to global bias effects.
+- Model outputs scores (not probabilities).
+- Inference currently uses Pandas DataFrame, which might limit performance.
 
-**GPU (with CUDA support):**
+## Usage
+After starting the services:
+- API documentation: http://localhost:8000/docs
+- TensorBoard logs: http://localhost:6006/
+1. Download dataset: ```/download``` (~876 MB)
+2. Run preprocessing: ```/preprocess```
+3. Train model: ```/train```
+4. Run inference: ```/predict``` or ```/topk```. 
+
+## Output
+The model produces a relative preference score indicating how likely a user is to interact positively with an item.
+Additionally, it supports Top-K recommendation output.
+
+## Docker Setup
+Two execution profiles are available:
+
+**GPU (CUDA-enabled):**
 
 ``` docker compose --profile gpu up --build```
 
-**CPU only:**
+**CPU-only:**
 
 ``` docker compose --profile cpu up --build```
 
-### Dataset Overview
-The dataset contains user-item interactions with ratings.
+## Dataset
+The dataset contains explicit user-item ratings from Amazon reviews.
 
-| item               | user                  | rating | timestamp      | user_id | item_id |
-|--------------------|-----------------------|--------|----------------|---------|---------|
-| B000K8PH8C         | A3PHJ4NMHMBBUB        | 5.0    | 1391212800     | 0       | 0       |
-| B001T6BK6M         | A3DTVMQGMNLX26        | 2.0    | 1392854400     | 1       | 1       |
-| B007GFX0PY         | A2ZGNB9CWL7SLK        | 1.0    | 1437091200     | 2       | 2       |
+| item               | user                  | rating | timestamp      |
+|--------------------|-----------------------|--------|----------------|
+| B000K8PH8C         | A3PHJ4NMHMBBUB        | 5.0    | 1391212800     |
+| B001T6BK6M         | A3DTVMQGMNLX26        | 2.0    | 1392854400     |
+| B007GFX0PY         | A2ZGNB9CWL7SLK        | 1.0    | 1437091200     |
 
-Prediction is computed as:
+## Model Formulation
+$r̂(u, i) = μ + b_u + b_i + <p_u, q_i>$  
+μ — global mean rating  
+bᵤ — user bias  
+bᵢ — item bias  
+pᵤ, qᵢ — latent embeddings  
 
-r̂(u, i) = μ + b_u + b_i + <p_u, q_i>
+## Data Preprocessing
+Implemented using Pandas:
+1. Filter users and items with fewer than 5 interactions
+2. Optional dataset subsampling via ```.sample()```
+3. Encode users and items using ```.factorize()```
+4. Save mappings (user - id, item - id, and reverse mappings for inference).
 
-## Pipeline
-- downloading dataset
-- preprocessing
-- training
-- inference
+## Training Details
+Training uses batch optimization over **user-item-rating** triplets.
+Model learns: user embeddings, item embeddings, bias parameters.
 
-### Data Preprocessing
-The preprocessing pipeline (implemented with Pandas) includes:
-1. Removing users and items with fewer than 5 interactions.
-2. Sampling the dataset using ```.sample()``` (configurable parameter).
-3. Encoding users and items with ```.factorize()```.
-4. Saving mappings (user - id, item - id, and vice versa).
+## Results
+> **Epoch 70/70 | train_loss=0.0455 | val_loss=0.0855 | val_rmse=0.2924 | val_mae=0.2158**
 
-### Training
-Prerequisites: processed dataset file, mapping file.
+### Interpretation
+Using TensorBoard plots,
+- 20 epochs are sufficient for given hyperparameters.
+- No clear overfitting observed.
+- Error levels are stable across validation set (MAE ≈ 0.22, RMSE ≈ 0.29)
 
-Training: uses a DataLoader. Each epoch iterates over: user_batch, item_batch, rating_batch.
-
-
-The model is based on matrix factorization:
-- user and item embeddings are learned
-- Bias terms are included for users and items
+| ![train_loss.png](docs/plots/train_loss.png) | ![val_loss.png](docs/plots/val_loss.png) |
+|----------------------------------------------|------------------------------------------|
+| ![val_rmse.png](docs/plots/val_rmse.png)     | ![val_mae.png](docs/plots/val_mae.png)   |
 
 
-RMSE >> MAE → есть выбросы
-RMSE ≈ MAE → ошибки равномерные
-У тебя:
-RMSE ≈ 1.18
-MAE ≈ 0.90
-MAE 0.9 → в среднем ты ошибаешься почти на 1 рейтинг
-RMSE выше → иногда ошибаешься сильно (например 2–3 балла)
-У меня регрессионная модель! и это рекомендательная система!
 
-Matrix factorization for explicit feedback!
+### Key Achievements
+- Built a full end-to-end recommendation system pipeline from raw Amazon review data to production-ready API.
+- Implemented a scalable matrix factorization model with bias terms and embedding representations for explicit feedback prediction.
+- Designed a reproducible ML workflow with Docker (CPU/GPU support), enabling consistent training and inference environments.
+- Integrated FastAPI inference service with authentication, validation (Pydantic), and batch prediction endpoints.
+- Implemented experiment tracking via TensorBoard for monitoring training dynamics and model convergence.
