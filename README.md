@@ -2,11 +2,11 @@
 
 ## Overview
 This project implements a recommendation system trained on real Amazon review data.
-The model predicts user-item preference scores using **matrix factorization with bias terms and embedding representations**.
-This is a **regression over explicit feedback (ratings)**.
+The model predicts user-item preference scores using matrix factorization with bias terms and embedding representations.
+This is a regression over explicit feedback (ratings).
 
-### Pipeline
-Data Download - Preprocessing - Training - Evaluation - API (Inference)
+**Pipeline**: Data Download - Preprocessing - Training - Evaluation - API (Inference)  
+**Tech Stack**: Python, PyTorch, FastAPI, Pandas, Docker, TensorBoard
 
 ## Features
 - Docker-based pipeline (GPU/CPU support)
@@ -16,13 +16,7 @@ Data Download - Preprocessing - Training - Evaluation - API (Inference)
 - API key protection via FastAPI Depends
 - Configuration via Config class (paths, parameters)
 
-## Tech Stack
-- Python
-- PyTorch
-- FastAPI
-- Pandas
-- Docker
-- TensorBoard
+
 
 ## ML Features
 - Matrix factorization with user and item embeddings (with bias terms)
@@ -30,13 +24,14 @@ Data Download - Preprocessing - Training - Evaluation - API (Inference)
 - TensorBoard logging
 - Manual learning rate scheduling based on epoch (currently disabled)
 - Train/validation split
-- Model saving to the file + JSON metadata storage
+- Saving model to the file + JSON metadata storage
 - Metrics: MSE, RMSE, MAE
 
 ## Limitations
 - Popular items have a greater score than the known user-item pairs due to global bias effects.
 - Model outputs scores (not probabilities).
 - Inference currently uses Pandas DataFrame, which might limit performance.
+- Currently, there are more modern recommendation systems in the world.
 
 ## Usage
 After starting the services:
@@ -72,7 +67,7 @@ The dataset contains explicit user-item ratings from Amazon reviews.
 | B007GFX0PY         | A2ZGNB9CWL7SLK        | 1.0    | 1437091200     |
 
 ## Model Formulation
-$r̂(u, i) = μ + b_u + b_i + <p_u, q_i>$  
+$r̂(u, i) = μ + b_u + b_i + <p_u, q_i> $  
 μ — global mean rating  
 bᵤ — user bias  
 bᵢ — item bias  
@@ -94,14 +89,13 @@ Model learns: user embeddings, item embeddings, bias parameters.
 
 ### Interpretation
 Using TensorBoard plots,
-- 20 epochs are sufficient for given hyperparameters.
 - No clear overfitting observed.
+- 20 epochs are sufficient for given hyperparameters.
 - Error levels are stable across validation set (MAE ≈ 0.22, RMSE ≈ 0.29)
 
 | ![train_loss.png](docs/plots/train_loss.png) | ![val_loss.png](docs/plots/val_loss.png) |
 |----------------------------------------------|------------------------------------------|
 | ![val_rmse.png](docs/plots/val_rmse.png)     | ![val_mae.png](docs/plots/val_mae.png)   |
-
 
 
 ### Key Achievements
