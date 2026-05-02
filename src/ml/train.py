@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 import pickle
 import json
 from torch.utils.tensorboard import SummaryWriter
+import logging
 import time
 
 
@@ -24,7 +25,7 @@ def train_loop(model, train_loader, val_loader, optimizer, loss_fn, N_EPOCHS, Co
     # reading from Config
     model_path, DEVICE = Config.MODEL_PATH, Config.DEVICE
     model.to(DEVICE)
-    print(f'start training on {DEVICE}...')
+    logging.info(f"Starting training on {DEVICE}")
     # ===== TensorBoard logging =====
     writer = SummaryWriter(log_dir=f"logs/mf_model_{int(time.time())}")
 

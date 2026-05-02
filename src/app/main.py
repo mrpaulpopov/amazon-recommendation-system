@@ -1,5 +1,11 @@
 from fastapi import FastAPI
 from src.app.routers import predict_router, train_router, preprocess_router, download_router, topk_router
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(message)s"
+)
 
 app = FastAPI()
 
