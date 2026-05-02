@@ -20,7 +20,7 @@ formulated as a regression task over explicit feedback.
 
 ## ML Approach
 - Matrix factorization with user and item embeddings (with bias terms)
-- Batch training via DataLoader (over **user-item-rating** triplets).
+- Batch training via DataLoader (over **user-item-rating** triplets)
 - Train/validation split
 - Saving model to the file + JSON metadata storage
 - Optimization via MSE loss
@@ -33,14 +33,15 @@ formulated as a regression task over explicit feedback.
 - Model outputs scores (not probabilities).
 - Inference currently uses Pandas DataFrame, which might limit performance.
 - The model uses classical matrix factorization. Currently, there are more modern recommendation models in the world (based on implicit feedback).
+- Training performance is sensitive to batch size: reducing the batch size may increase epoch duration. This is likely caused by a data loading bottleneck (loading from Pandas in each iteration).
 
 ## Results
-> **Epoch 70/70 | train_loss=0.0455 | val_loss=0.0855 | val_rmse=0.2924 | val_mae=0.2158**
+> **Epoch 20/20 | train_loss=0.0460 | val_loss=0.0854 | val_rmse=0.2922 | val_mae=0.2149**
 
 ### Metric Interpretation
 The model is trained on normalized ratings in the [0, 1] range using the transformation (rating - 1) / 4.
 
-- **MAE ≈ 0.22 (normalized)** corresponds to ≈ **0.88 rating points** on the original [1, 5] scale  
+- **MAE ≈ 0.21 (normalized)** corresponds to ≈ **0.84 rating points** on the original [1, 5] scale  
 - **RMSE ≈ 0.29 (normalized)** corresponds to ≈ **1.16 rating points** on the original scale  
 
 This means that, on average, predicted ratings deviate by less than 1 point from true user ratings.
@@ -87,3 +88,6 @@ Implemented using Pandas:
 2. Optional dataset subsampling via ```.sample()```
 3. Encode users and items using ```.factorize()```
 4. Save mappings (user - id, item - id, and reverse mappings for inference).
+
+Basic logging is implemented to track training, inference, and system events.
+The system logs key lifecycle events, request handling, and errors, which simplifies debugging and monitoring in production-like environments.
