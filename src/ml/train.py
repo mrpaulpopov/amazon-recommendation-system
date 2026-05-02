@@ -4,7 +4,6 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from src.ml.model import MFModel
-from src.ml.config import Config
 from sklearn.model_selection import train_test_split
 import pickle
 import json

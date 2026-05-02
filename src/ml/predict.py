@@ -107,5 +107,4 @@ def recommend_for_user(Config, user_str, top_k):
 
     # --- sort ---
     item_scores.sort(key=lambda x: x["score"], reverse=True)
-    # print(item_scores[:10]) # debug information
     return item_scores[:top_k]
