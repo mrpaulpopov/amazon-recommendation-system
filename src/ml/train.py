@@ -81,7 +81,6 @@ def train_loop(model, train_loader, val_loader, optimizer, loss_fn, N_EPOCHS, Co
                 rating_batch = rating_batch.to(DEVICE)
 
                 preds = model(user_batch, item_batch)
-                # preds = torch.sigmoid(raw_preds)  # clamping v2
 
                 loss = loss_fn(preds, rating_batch)
 
@@ -101,7 +100,7 @@ def train_loop(model, train_loader, val_loader, optimizer, loss_fn, N_EPOCHS, Co
             f"train_loss={train_loss:.4f} | "
             f"val_loss={val_loss:.4f} | "
             f"val_rmse={rmse.item():.4f} | "
-            f"mae={mae.item():.4f}"
+            f"val_mae={mae.item():.4f}"
         )
 
         # ===== TensorBoard logging =====
