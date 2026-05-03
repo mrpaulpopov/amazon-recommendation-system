@@ -1,4 +1,3 @@
-![CI](https://github.com/mrpaulpopov/amazon-recommendation-system/actions/workflows/ci.yml/badge.svg)
 # Amazon Recommendation System
 
 ## Overview
@@ -70,7 +69,6 @@ Basic CI pipeline is implemented using GitHub Actions. The pipeline runs automat
 - Dependency installation
 - Code linting (Ruff)
 - Running unit tests (PyTest)
-This ensures that code style is consistent, core functionality is not broken, changes are validated before merging.
 
 ## Usage + Docker Setup
 Two execution profiles are available:
