@@ -1,6 +1,5 @@
 from fastapi import HTTPException
 from src.ml.predict import recommend_for_user
-from src.ml.config import Config
 import logging
 
 def topk_service(Config, user_str, top_k):

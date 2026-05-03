@@ -1,6 +1,5 @@
 from src.ml.predict import predict_user_items
 from fastapi import HTTPException
-from src.ml.config import Config
 import logging
 
 def predict_service(Config, user_str, item_strs):

@@ -116,7 +116,7 @@ def train_loop(model, train_loader, val_loader, optimizer, loss_fn, N_EPOCHS, Co
 
 def train_pipeline(Config, EMBEDDING_DIM, LEARNING_RATE, BATCH_SIZE, N_EPOCHS):
     # reading from Config
-    data_path, model_path, mapping_path, DEVICE = Config.DATA_PATH, Config.MODEL_PATH, Config.MAPPING_PATH, Config.DEVICE
+    data_path, model_path, mapping_path = Config.DATA_PATH, Config.MODEL_PATH, Config.MAPPING_PATH
 
     df = pd.read_csv(data_path)
 
@@ -124,8 +124,6 @@ def train_pipeline(Config, EMBEDDING_DIM, LEARNING_RATE, BATCH_SIZE, N_EPOCHS):
         mappings = pickle.load(f)
     num_users = mappings["num_users"]
     num_items = mappings["num_items"]
-    user_ids = mappings["user_to_id"]
-    item_ids = mappings["item_to_id"]
 
     model = MFModel(num_users, num_items, EMBEDDING_DIM)
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=0.000001)

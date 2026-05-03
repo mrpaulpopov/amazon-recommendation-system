@@ -1,6 +1,4 @@
 import requests
-from pathlib import Path
-from src.ml.config import Config
 
 def download_service(Config):
     url = "https://mcauleylab.ucsd.edu/public_datasets/data/amazon_v2/categoryFilesSmall/Electronics.csv"

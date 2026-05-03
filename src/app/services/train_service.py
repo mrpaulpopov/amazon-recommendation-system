@@ -1,4 +1,3 @@
-from src.ml.config import Config
 from src.ml.train import train_pipeline
 import logging
 

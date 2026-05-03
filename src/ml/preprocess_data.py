@@ -1,6 +1,5 @@
 import pandas as pd
 import pickle
-from src.ml.config import Config
 
 def preprocess(Config, samplesize):
     # reading from Config

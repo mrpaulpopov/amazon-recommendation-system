@@ -1,4 +1,3 @@
-from src.ml.config import Config
 from src.ml.preprocess_data import preprocess
 import logging
 

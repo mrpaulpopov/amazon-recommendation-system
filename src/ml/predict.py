@@ -1,7 +1,6 @@
 import torch
 import pickle
 from src.ml.model import MFModel
-from src.ml.config import Config
 import json
 import pandas as pd
 
