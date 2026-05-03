@@ -13,7 +13,7 @@ ENV PYTHONUNBUFFERED=1
 
 # tensorboard + uvicorn
 # 'exec uvicorn' makes him the first process for printing logs.
-CMD ["bash", "-c", "tensorboard --logdir=/logs --host=0.0.0.0 --port=6006 & exec uvicorn src.app.main:app --host 0.0.0.0 --port=8000"]
+CMD ["bash", "-c", "tensorboard --logdir=/src/app/logs --host=0.0.0.0 --port=6006 & exec uvicorn src.app.main:app --host 0.0.0.0 --port=8000"]
 #CMD sh -c "tensorboard --logdir=/logs --host=0.0.0.0 --port=6006 & uvicorn src.app.main:app --host 0.0.0.0 --port=8000"
 
 #docker compose --profile gpu up --build
