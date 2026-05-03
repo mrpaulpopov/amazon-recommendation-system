@@ -6,7 +6,7 @@ services:
     volumes:
       - ./data:/src/app/data
       - ./models:/src/app/models
-      - ./logs:/logs
+      - ./logs:/src/app/logs
     ports:
       - "8000:8000"
       - "6006:6006"
@@ -19,7 +19,7 @@ services:
     volumes:
       - ./data:/src/app/data
       - ./models:/src/app/models
-      - ./logs:/logs
+      - ./logs:/src/app/logs
     ports:
       - "8000:8000"
       - "6006:6006"
