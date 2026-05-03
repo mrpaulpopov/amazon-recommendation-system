@@ -17,6 +17,8 @@ formulated as a regression task over explicit feedback.
 - Input validation using Pydantic
 - API key protection via FastAPI Depends
 - Configuration via Config class (paths, parameters)
+- Logging for training and API monitoring
+- Unit testing with PyTest
 
 ## ML Approach
 - Matrix factorization with user and item embeddings (with bias terms)
@@ -53,6 +55,14 @@ This means that, on average, predicted ratings deviate by less than 1 point from
 |----------------------------------------------|------------------------------------------|
 | ![val_rmse.png](docs/plots/val_rmse.png)     | ![val_mae.png](docs/plots/val_mae.png)   |
 
+## Logging
+Basic logging is implemented to track training, inference, and system events. Logs include lifecycle events, request handling, and errors.
+
+## Testing
+Unit tests are implemented using PyTest to ensure correctness of core components.  
+To run tests: ```pytest```
+The current test file consists of 5 unit tests.
+
 ## Usage + Docker Setup
 Two execution profiles are available:
 
@@ -88,6 +98,3 @@ Implemented using Pandas:
 2. Optional dataset subsampling via ```.sample()```
 3. Encode users and items using ```.factorize()```
 4. Save mappings (user - id, item - id, and reverse mappings for inference).
-
-Basic logging is implemented to track training, inference, and system events.
-The system logs key lifecycle events, request handling, and errors, which simplifies debugging and monitoring in production-like environments.

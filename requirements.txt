@@ -9,3 +9,5 @@ uvicorn
 requests
 scikit-learn
 tensorboard
+httpx
+pytest
