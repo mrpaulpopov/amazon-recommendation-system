@@ -19,6 +19,7 @@ formulated as a regression task over explicit feedback.
 - Configuration via Config class (paths, parameters)
 - Logging for training and API monitoring
 - Unit testing with PyTest
+- CI pipeline via GitHub Actions (install, lint, tests)
 
 ## ML Approach
 - Matrix factorization with user and item embeddings (with bias terms)
@@ -62,6 +63,13 @@ Basic logging is implemented to track training, inference, and system events. Lo
 Unit tests are implemented using PyTest to ensure correctness of core components.  
 To run tests: ```pytest```
 The current test file consists of 5 unit tests.
+
+## CI/CD
+Basic CI pipeline is implemented using GitHub Actions. The pipeline runs automatically on every push and pull request and includes:
+- Dependency installation
+- Code linting (Ruff)
+- Running unit tests (PyTest)
+This ensures that code style is consistent, core functionality is not broken, changes are validated before merging.
 
 ## Usage + Docker Setup
 Two execution profiles are available:
