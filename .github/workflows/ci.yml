@@ -35,11 +35,11 @@ jobs:
 
       - name: Build Docker (CPU profile)
         run: |
-          docker compose --profile cpu up --build
+          docker compose --profile cpu --build
 
       - name: Run container (smoke test)
         run: |
-          docker run -d -p 8000:8000 --name test-container app
-          sleep 5
-          curl -f http://localhost:8000/docs || exit 1
-          docker stop test-container
+          docker compose --profile cpu up -d
+          sleep 10
+          curl -f http://localhost:8000/docs
+          docker compose down
