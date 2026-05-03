@@ -69,6 +69,7 @@ Basic CI pipeline is implemented using GitHub Actions. The pipeline runs automat
 - Dependency installation
 - Code linting (Ruff)
 - Running unit tests (PyTest)
+- Docker container smoke test (HTTP health check)
 
 ## Usage + Docker Setup
 Two execution profiles are available:

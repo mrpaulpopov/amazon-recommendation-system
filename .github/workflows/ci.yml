@@ -33,13 +33,9 @@ jobs:
         run: |
           pytest
 
-      - name: Build Docker (CPU profile)
+      - name: Build & Run container (smoke test)
         run: |
-          docker compose --profile cpu --build
-
-      - name: Run container (smoke test)
-        run: |
-          docker compose --profile cpu up -d
+          docker compose --profile cpu up --build -d
           sleep 10
           curl -f http://localhost:8000/docs
           docker compose down
