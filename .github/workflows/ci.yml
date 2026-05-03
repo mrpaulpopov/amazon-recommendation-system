@@ -32,3 +32,14 @@ jobs:
       - name: Run tests
         run: |
           pytest
+
+      - name: Build Docker (CPU profile)
+        run: |
+          docker compose --profile cpu up --build
+
+      - name: Run container (smoke test)
+        run: |
+          docker run -d -p 8000:8000 --name test-container app
+          sleep 5
+          curl -f http://localhost:8000/docs || exit 1
+          docker stop test-container
