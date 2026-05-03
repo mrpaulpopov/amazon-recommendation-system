@@ -36,7 +36,6 @@ formulated as a regression task over explicit feedback.
 - Model outputs scores (not probabilities).
 - Inference currently uses Pandas DataFrame, which might limit performance.
 - The model uses classical matrix factorization. Currently, there are more modern recommendation models in the world (based on implicit feedback).
-- Training performance is sensitive to batch size: reducing the batch size may increase epoch duration. This is likely caused by a data loading bottleneck (loading from Pandas in each iteration).
 
 ## Results
 > **Epoch 20/20 | train_loss=0.0460 | val_loss=0.0854 | val_rmse=0.2922 | val_mae=0.2149**
