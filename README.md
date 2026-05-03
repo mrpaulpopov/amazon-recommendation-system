@@ -1,4 +1,4 @@
-![CI](https://github.com/<your-username>/<repo-name>/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/mrpaulpopov/amazon-recommendation-system/actions/workflows/ci.yml/badge.svg)
 # Amazon Recommendation System
 
 ## Overview
